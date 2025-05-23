@@ -118,8 +118,12 @@ abstract class Channel {
 
   protected void consumeAvailable(Duration pollDuration) {
     LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment());
+    for (TopicPartition tp : consumer.assignment()) {
+      long pos = consumer.position(tp);
+      LOG.info("{} Position for partition {}:{}", Thread.currentThread(), tp.partition(),  pos);
+    }
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
-    LOG.info("{} Received {} records during consumeAvailable", Thread.currentThread(), records.count());
+    LOG.info("{} Empty? {}", Thread.currentThread(), records.isEmpty());
     while (!records.isEmpty()) {
       records.forEach(
           record -> {
