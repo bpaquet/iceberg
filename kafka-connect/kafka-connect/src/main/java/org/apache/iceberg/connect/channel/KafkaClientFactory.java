@@ -32,8 +32,11 @@ import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class KafkaClientFactory {
+  private static final Logger LOG = LoggerFactory.getLogger(KafkaClientFactory.class);
   private final Map<String, String> kafkaProps;
 
   KafkaClientFactory(Map<String, String> kafkaProps) {
@@ -57,6 +60,7 @@ class KafkaClientFactory {
     consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
     consumerProps.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
     consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
+    LOG.info("Kafka consumer group id: {}, {}", consumerGroupId, consumerProps);
     return new KafkaConsumer<>(
         consumerProps, new StringDeserializer(), new ByteArrayDeserializer());
   }

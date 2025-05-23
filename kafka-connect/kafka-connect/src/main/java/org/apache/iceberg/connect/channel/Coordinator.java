@@ -102,7 +102,7 @@ class Coordinator extends Channel {
       Event event =
           new Event(config.connectGroupId(), new StartCommit(commitState.currentCommitId()));
       send(event);
-      LOG.info("Commit {} initiated, commitMap {}", commitState.currentCommitId(), commitState.tableCommitMap());
+      LOG.info("{}, Commit {} initiated, commitMap {}, totalPartitionCount {}", Thread.currentThread(), commitState.currentCommitId(), commitState.tableCommitMap(), totalPartitionCount);
       LOG.info("Event sent {} {}", event.groupId(), event.payload());
     }
 
@@ -115,6 +115,7 @@ class Coordinator extends Channel {
 
   @Override
   protected boolean receive(Envelope envelope) {
+    LOG.info("{}, Received envelope: {}", Thread.currentThread(), envelope);
     switch (envelope.event().payload().type()) {
       case DATA_WRITTEN:
         commitState.addResponse(envelope);

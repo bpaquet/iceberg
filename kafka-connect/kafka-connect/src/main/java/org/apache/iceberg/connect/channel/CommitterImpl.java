@@ -28,6 +28,7 @@ import org.apache.iceberg.connect.Committer;
 import org.apache.iceberg.connect.IcebergSinkConfig;
 import org.apache.iceberg.connect.data.SinkWriter;
 import org.apache.iceberg.relocated.com.google.common.annotations.VisibleForTesting;
+import org.apache.iceberg.relocated.com.google.common.collect.Maps;
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.MemberDescription;
@@ -60,7 +61,7 @@ public class CommitterImpl implements Committer {
 
   @Override
   public void start(Catalog catalog, IcebergSinkConfig config, SinkTaskContext context) {
-    Map<String, String> props = new HashMap<>(config.kafkaProps());
+    Map<String, String> props = Maps.newHashMap(config.kafkaProps());
     props.put("consumer.max.poll.records", "2");
     LOG.info("Kafka properties for committer: {}", props);
     KafkaClientFactory clientFactory = new KafkaClientFactory(props);
