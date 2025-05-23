@@ -117,9 +117,9 @@ abstract class Channel {
   protected abstract boolean receive(Envelope envelope);
 
   protected void consumeAvailable(Duration pollDuration) {
-    LOG.info("Trying to consume from control topic {}, pollDuration {}", controlTopic, pollDuration);
+    LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment());
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
-    LOG.info("Received {} records during commit", records.count());
+    LOG.info("{} Received {} records during consumeAvailable", Thread.currentThread(), records.count());
     while (!records.isEmpty()) {
       records.forEach(
           record -> {
@@ -132,11 +132,11 @@ abstract class Channel {
             if (event.groupId().equals(connectGroupId)) {
               LOG.debug("Received event of type: {}", event.type().name());
               if (receive(new Envelope(event, record.partition(), record.offset()))) {
-                LOG.info("Handled event of type: {}", event.type().name());
+                LOG.info("{} Handled event of type: {}", Thread.currentThread(), event.type().name());
               }
             }
           });
-      LOG.info("Fetching again");
+      LOG.info("{} Fetching again", Thread.currentThread());
       records = consumer.poll(pollDuration);
     }
   }
