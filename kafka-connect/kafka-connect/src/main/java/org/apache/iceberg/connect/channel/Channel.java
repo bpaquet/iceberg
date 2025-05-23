@@ -123,6 +123,7 @@ abstract class Channel {
     while (!records.isEmpty()) {
       records.forEach(
           record -> {
+            LOG.info("{} Message {} {}", Thread.currentThread(), record.offset(), record.partition());
             // the consumer stores the offsets that corresponds to the next record to consume,
             // so increment the record offset by one
             controlTopicOffsets.put(record.partition(), record.offset() + 1);
