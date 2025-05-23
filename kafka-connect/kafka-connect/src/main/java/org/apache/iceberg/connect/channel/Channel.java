@@ -19,6 +19,7 @@
 package org.apache.iceberg.connect.channel;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -120,7 +121,9 @@ abstract class Channel {
     LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment());
     for (TopicPartition tp : consumer.assignment()) {
       long pos = consumer.position(tp);
-      LOG.info("{} Position for partition {}:{}", Thread.currentThread(), tp.partition(),  pos);
+      long end = consumer.endOffsets(Collections.singleton(tp)).get(tp);
+      long committed = consumer.committed(tp).offset();
+      LOG.info("{} Position for partition {}: {} end {} committed {}", Thread.currentThread(), tp.partition(), pos, end, committed);
     }
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
     LOG.info("{} Empty? {}", Thread.currentThread(), records.isEmpty());
