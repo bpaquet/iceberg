@@ -19,6 +19,7 @@
 package org.apache.iceberg.connect.channel;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import org.apache.iceberg.relocated.com.google.common.collect.Maps;
 import org.apache.kafka.clients.admin.Admin;
@@ -60,6 +61,9 @@ class KafkaClientFactory {
     consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
     consumerProps.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
     consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
+    if (consumerGroupId.endsWith("-coord")) {
+        consumerProps.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
+    }
     LOG.info("Kafka consumer group id: {}, {}", consumerGroupId, consumerProps);
     return new KafkaConsumer<>(
         consumerProps, new StringDeserializer(), new ByteArrayDeserializer());
