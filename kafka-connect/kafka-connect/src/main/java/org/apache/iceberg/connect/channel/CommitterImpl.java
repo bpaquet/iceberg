@@ -61,10 +61,7 @@ public class CommitterImpl implements Committer {
 
   @Override
   public void start(Catalog catalog, IcebergSinkConfig config, SinkTaskContext context) {
-    Map<String, String> props = Maps.newHashMap(config.kafkaProps());
-    props.put("consumer.max.poll.records", "2");
-    LOG.info("Kafka properties for committer: {}", props);
-    KafkaClientFactory clientFactory = new KafkaClientFactory(props);
+    KafkaClientFactory clientFactory = new KafkaClientFactory(config.kafkaProps());
 
     ConsumerGroupDescription groupDesc;
     try (Admin admin = clientFactory.createAdmin()) {
