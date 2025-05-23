@@ -20,6 +20,8 @@ package org.apache.iceberg.connect.channel;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.connect.Committer;
@@ -58,7 +60,10 @@ public class CommitterImpl implements Committer {
 
   @Override
   public void start(Catalog catalog, IcebergSinkConfig config, SinkTaskContext context) {
-    KafkaClientFactory clientFactory = new KafkaClientFactory(config.kafkaProps());
+    Map<String, String> props = new HashMap<>(config.kafkaProps());
+    props.put("max.poll.records", "2");
+    LOG.info("Kafka properties for committer: {}", props);
+    KafkaClientFactory clientFactory = new KafkaClientFactory(props);
 
     ConsumerGroupDescription groupDesc;
     try (Admin admin = clientFactory.createAdmin()) {
