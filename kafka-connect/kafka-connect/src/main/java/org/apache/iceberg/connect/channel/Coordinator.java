@@ -103,7 +103,7 @@ class Coordinator extends Channel {
           new Event(config.connectGroupId(), new StartCommit(commitState.currentCommitId()));
       send(event);
       LOG.info("Commit {} initiated, commitMap {}", commitState.currentCommitId(), commitState.tableCommitMap());
-      LOG.info("Event sent {}", event);
+      LOG.info("Event sent {} {}", event.groupId(), event.payload());
     }
 
     consumeAvailable(POLL_DURATION);
