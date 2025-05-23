@@ -117,7 +117,7 @@ abstract class Channel {
   protected abstract boolean receive(Envelope envelope);
 
   protected void consumeAvailable(Duration pollDuration) {
-    LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment());
+    LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment(), consumer.beginningOffsets());
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
     LOG.info("{} Received {} records during consumeAvailable", Thread.currentThread(), records.count());
     while (!records.isEmpty()) {

@@ -65,7 +65,7 @@ class Coordinator extends Channel {
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final String COMMIT_ID_SNAPSHOT_PROP = "kafka.connect.commit-id";
   private static final String VALID_THROUGH_TS_SNAPSHOT_PROP = "kafka.connect.valid-through-ts";
-  private static final Duration POLL_DURATION = Duration.ofSeconds(1);
+  private static final Duration POLL_DURATION = Duration.ofSeconds(15);
 
   private final Catalog catalog;
   private final IcebergSinkConfig config;
