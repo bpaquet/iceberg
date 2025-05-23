@@ -117,9 +117,10 @@ abstract class Channel {
   protected abstract boolean receive(Envelope envelope);
 
   protected void consumeAvailable(Duration pollDuration) {
+    LOG.info("Trying to consume from control topic {}, pollDuration {}", controlTopic, pollDuration);
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
+    LOG.info("Received {} records during commit", records.count());
     while (!records.isEmpty()) {
-      LOG.info("Received {} records during commit", records.count());
       records.forEach(
           record -> {
             // the consumer stores the offsets that corresponds to the next record to consume,
@@ -135,6 +136,7 @@ abstract class Channel {
               }
             }
           });
+      LOG.info("Fetching again");
       records = consumer.poll(pollDuration);
     }
   }
@@ -153,10 +155,13 @@ abstract class Channel {
   }
 
   void start() {
+    LOG.info("Subscribing to control topic {}", controlTopic);
     consumer.subscribe(ImmutableList.of(controlTopic));
 
     // initial poll with longer duration so the consumer will initialize...
+    LOG.info("Initial polling");
     consumeAvailable(Duration.ofSeconds(1));
+    LOG.info("End of initial polling");
   }
 
   void stop() {
