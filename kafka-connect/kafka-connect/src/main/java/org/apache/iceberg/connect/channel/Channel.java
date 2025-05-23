@@ -119,6 +119,7 @@ abstract class Channel {
   protected void consumeAvailable(Duration pollDuration) {
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
     while (!records.isEmpty()) {
+      LOG.info("Received {} records during commit", records.count());
       records.forEach(
           record -> {
             // the consumer stores the offsets that corresponds to the next record to consume,
