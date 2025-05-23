@@ -118,7 +118,7 @@ abstract class Channel {
   protected abstract boolean receive(Envelope envelope);
 
   protected void consumeAvailable(Duration pollDuration) {
-    LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment());
+    LOG.info("{} Trying to consume from control topic {}, pollDuration {}, {}, {}, {}, {}", Thread.currentThread(), controlTopic, pollDuration, consumer.groupMetadata().groupId(), this.getClass(), consumer.assignment(), consumer.paused());
     for (TopicPartition tp : consumer.assignment()) {
       long pos = consumer.position(tp);
       long end = consumer.endOffsets(Collections.singleton(tp)).get(tp);
