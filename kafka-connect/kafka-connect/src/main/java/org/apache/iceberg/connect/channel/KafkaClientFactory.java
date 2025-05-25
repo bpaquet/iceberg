@@ -59,7 +59,7 @@ class KafkaClientFactory {
     consumerProps.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
     consumerProps.putIfAbsent(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
     consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-    consumerProps.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
+    consumerProps.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_uncommitted");
     consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
     LOG.info("Kafka consumer group id: {}, {}", consumerGroupId, consumerProps);
     return new KafkaConsumer<>(
