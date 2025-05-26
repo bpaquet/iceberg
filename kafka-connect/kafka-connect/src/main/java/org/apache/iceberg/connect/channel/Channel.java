@@ -95,6 +95,7 @@ abstract class Channel {
 
     synchronized (producer) {
       producer.beginTransaction();
+      LOG.info("{} Begin transaction", Thread.currentThread());
       try {
         // NOTE: we shouldn't call get() on the future in a transactional context,
         // see docs for org.apache.kafka.clients.producer.KafkaProducer
@@ -103,9 +104,11 @@ abstract class Channel {
           producer.sendOffsetsToTransaction(
               offsetsToCommit, KafkaUtils.consumerGroupMetadata(context));
         }
+        LOG.info("{} Commit transaction", Thread.currentThread());
         producer.commitTransaction();
       } catch (Exception e) {
         try {
+          LOG.info("{} Abort transaction", Thread.currentThread());
           producer.abortTransaction();
         } catch (Exception ex) {
           LOG.warn("Error aborting producer transaction", ex);
@@ -122,7 +125,10 @@ abstract class Channel {
     for (TopicPartition tp : consumer.assignment()) {
       long pos = consumer.position(tp);
       long end = consumer.endOffsets(Collections.singleton(tp)).get(tp);
-      long committed = consumer.committed(tp).offset();
+      long committed = -1;
+      if (consumer.committed(tp) != null) {;
+        committed = consumer.committed(tp).offset();
+      }
       LOG.info("{} Position for partition {}: {} end {} committed {}", Thread.currentThread(), tp.partition(), pos, end, committed);
     }
     ConsumerRecords<String, byte[]> records = consumer.poll(pollDuration);
