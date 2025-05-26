@@ -95,7 +95,7 @@ abstract class Channel {
 
     synchronized (producer) {
       producer.beginTransaction();
-      LOG.info("{} Begin transaction", Thread.currentThread());
+      LOG.info("{} Begin transaction iceberg-coord", Thread.currentThread());
       try {
         // NOTE: we shouldn't call get() on the future in a transactional context,
         // see docs for org.apache.kafka.clients.producer.KafkaProducer
@@ -104,11 +104,11 @@ abstract class Channel {
           producer.sendOffsetsToTransaction(
               offsetsToCommit, KafkaUtils.consumerGroupMetadata(context));
         }
-        LOG.info("{} Commit transaction", Thread.currentThread());
+        LOG.info("{} Commit transaction iceberg-coord", Thread.currentThread());
         producer.commitTransaction();
       } catch (Exception e) {
         try {
-          LOG.info("{} Abort transaction", Thread.currentThread());
+          LOG.info("{} Abort transaction iceberg-coord", Thread.currentThread());
           producer.abortTransaction();
         } catch (Exception ex) {
           LOG.warn("Error aborting producer transaction", ex);
